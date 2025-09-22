@@ -1,0 +1,29 @@
+@startuml
+' Внешние сущности
+actor "Пациент" as Patient
+actor "Врач" as Doctor
+database "Защищенная БД" as SecureDB #lightyellow
+database "Система аудита" as AuditSystem #lightyellow
+
+' Основной процесс
+rectangle "Защищенная система регистрации" as SecureSystem #lightblue
+rectangle "Аутентификация" as Auth #lightgreen
+rectangle "Шифрование данных" as Encryption #orange
+rectangle "Тегирование конфиденциальности" as Tagging #pink
+rectangle "Контроль доступа (RBAC)" as AccessControl #lightblue
+rectangle "Мониторинг безопасности" as Monitoring #lightblue
+
+' Потоки данных
+Patient --> SecureSystem : Обращение (TLS)
+SecureSystem --> Auth : Проводит аутентификацию
+Auth --> Encryption : Шифрует данные (AES-256)
+Encryption --> SecureDB : Сохраняет зашифрованные данные
+Encryption --> Tagging : Применяет теги конфиденциальности
+Tagging --> SecureDB : Тегирует данные
+AccessControl --> SecureDB : Контролирует доступ по ролям
+Doctor --> AccessControl : Запрашивает доступ к данным
+AccessControl --> SecureDB : Проверяет права доступа
+SecureDB --> Doctor : Предоставляет данные (если разрешено)
+Monitoring --> SecureDB : Мониторит все операции
+Monitoring --> AuditSystem : Логирует действия
+@enduml
