@@ -1,0 +1,57 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Context.puml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(patient, "Patient")
+Person(doctor, "Doctor")
+Person(admin, "Administrator")
+Person(bookkeeper, "Bookkeeper")
+Person(warehouse_keeper, "Warehouse keeper")
+Person(cashier, "Cassier")
+
+System_Boundary(medikamente, "МЕДИКАМЕНТЕ") {
+    
+    Container(iam, "IAM System", "Система", "Аутентификация, авторизация, RBAC")
+    Container(data_classification, "Data Classification", "Сервис", "Классификация и тегирование данных")
+    Container(audit_monitoring, "Audit & Monitoring", "Система", "Аудит доступа, мониторинг")
+    Container(encryption, "Encryption Service", "Сервис", "Шифрование данных")
+    
+    Container(data_lake, "Secure Data Lake", "Хранилище", "Зонирование по конфиденциальности")
+    
+    Container(patient_portal, "Patient Portal", "Web App", "Портал пациентов")
+    Container(crm, "CRM System", "Система", "Управление клиентами")
+    Container(patient_db, "Patient Database", "БД", "Данные пациентов")
+    Container(analytics_db, "Analytics Database", "БД", "Аналитические данные")
+    
+    Container(accounting_1c, "1С:Бухгалтерия предприятия", "Система", "Финансовый учет")
+    Container(warehouse_1c, "1С:Торговля и Склад", "Система", "Учет ТМЦ")
+    Container(kkm, "ККМ", "Система", "Касса")
+}
+
+System_Ext(laboratory, "Лаборатория", "Внешняя система")
+
+Rel(patient, patient_portal, "Использует", "HTTPS")
+Rel(doctor, crm, "Работает", "HTTPS")
+Rel(admin, crm, "Управляет", "HTTPS")
+Rel(bookkeeper, accounting_1c, "Ведет учет", "HTTPS")
+Rel(warehouse_keeper, warehouse_1c, "Управляет складом", "HTTPS")
+Rel(cashier, kkm, "Принимает платежи", "TCP/IP")
+
+Rel(patient_portal, iam, "Аутентификация", "HTTPS")
+Rel(crm, iam, "Аутентификация", "HTTPS")
+Rel(patient_portal, data_classification, "Классификация", "HTTPS")
+Rel(crm, data_classification, "Классификация", "HTTPS")
+Rel(encryption, patient_db, "Шифрование", "HTTPS")
+Rel(audit_monitoring, patient_db, "Аудит", "HTTPS")
+
+Rel(data_classification, data_lake, "Классификация", "HTTPS")
+Rel(data_lake, analytics_db, "Хранение", "HTTPS")
+
+Rel(accounting_1c, patient_db, "Финансовые данные", "HTTPS")
+Rel(warehouse_1c, analytics_db, "Данные для аналитики", "HTTPS")
+Rel(kkm, accounting_1c, "Платежи", "TCP/IP-OLE")
+Rel(accounting_1c, warehouse_1c, "Обмен данными", "OLE")
+
+Rel(crm, laboratory, "Результаты анализов", "HTTPS")
+
+@enduml
