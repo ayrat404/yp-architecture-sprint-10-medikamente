@@ -1,0 +1,24 @@
+@startuml
+' Внешние сущности
+actor "Пациент" as Patient
+actor "Бухгалтер" as Accountant
+database "1С Бухгалтерия" as Accounting #lightyellow
+database "Excel файлы" as ExcelFiles #lightyellow
+
+' Основной процесс
+rectangle "Система обработки платежей" as PaymentSystem #lightblue
+rectangle "Прием платежа" as PaymentReceive #lightgreen
+rectangle "Проведение через ККМ" as KKMProcess #orange
+rectangle "Двойной учет" as DoubleEntry #pink
+rectangle "Обработка в 1С" as AccountingProcess #lightblue
+
+' Потоки данных
+Patient --> PaymentSystem : Оплата услуг
+PaymentSystem --> PaymentReceive : Обрабатывает платеж
+PaymentReceive --> KKMProcess : Проводит через ККМ
+KKMProcess --> Accounting : Передает данные (TCP/IP-OLE)
+PaymentReceive --> DoubleEntry : Ведет двойной учет
+DoubleEntry --> ExcelFiles : Сохраняет в Excel
+AccountingProcess --> Accounting : Обрабатывает платежи
+Accountant --> Accounting : Контролирует операции
+@enduml

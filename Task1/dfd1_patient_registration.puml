@@ -1,0 +1,26 @@
+@startuml
+' Внешние сущности
+actor "Пациент" as Patient
+actor "Врач" as Doctor
+database "Excel файлы" as ExcelFiles #lightyellow
+database "Файловая система" as FileSystem #lightyellow
+
+' Основной процесс
+rectangle "Система регистрации пациентов" as Registration #lightblue
+rectangle "Прием заявки" as Request #lightgreen
+rectangle "Регистрация пациента" as PatientReg #orange
+rectangle "Запись к врачу" as Appointment #pink
+rectangle "Создание медицинской карты" as MedicalCard #lightblue
+
+' Потоки данных
+Patient --> Registration : Обращение в клинику
+Registration --> Request : Обрабатывает заявку
+Request --> PatientReg : Регистрирует пациента
+PatientReg --> ExcelFiles : Сохраняет данные пациента
+PatientReg --> Appointment : Записывает к врачу
+Appointment --> ExcelFiles : Обновляет журнал врача
+Appointment --> MedicalCard : Создает медицинскую карту
+MedicalCard --> FileSystem : Сохраняет документы пациента
+Doctor --> ExcelFiles : Просматривает записи
+Doctor --> FileSystem : Добавляет результаты
+@enduml

@@ -1,0 +1,26 @@
+@startuml
+' Внешние сущности
+actor "Складской работник" as Warehouse
+actor "Бухгалтер" as Accountant
+database "1С Торговля и склад" as Trade #lightyellow
+database "1С Бухгалтерия" as Accounting #lightyellow
+
+' Основной процесс
+rectangle "Система учета ТМЦ" as InventorySystem #lightblue
+rectangle "Учет поступления" as Receipt #lightgreen
+rectangle "Учет расходования" as Consumption #orange
+rectangle "Инвентаризация" as Inventory #pink
+rectangle "Синхронизация с бухгалтерией" as Sync #lightblue
+
+' Потоки данных
+Warehouse --> InventorySystem : Учет ТМЦ
+InventorySystem --> Receipt : Обрабатывает поступление
+InventorySystem --> Consumption : Обрабатывает расходование
+InventorySystem --> Inventory : Проводит инвентаризацию
+Receipt --> Trade : Обновляет складские остатки
+Consumption --> Trade : Обновляет складские остатки
+Inventory --> Trade : Корректирует остатки
+Trade <--> Accounting : Обмен данными (OLE)
+Sync --> Accounting : Синхронизирует данные
+Accountant --> Accounting : Контролирует операции
+@enduml
